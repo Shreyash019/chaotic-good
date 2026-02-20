@@ -1,0 +1,17 @@
+# Environment variables — never commit .env
+.env
+
+# Go build outputs
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Go test cache
+*.test
+*.out
+
+# Go workspace sum
+go.work.sum
