@@ -1,4 +1,4 @@
-.PHONY: dev build tidy auth gateway user joke nginx nginx-stop nginx-reload nginx-test migrate migrate-auth migrate-user migrate-joke db db-stop db-reset db-logs
+.PHONY: dev build tidy test test-verbose auth gateway user joke nginx nginx-stop nginx-reload nginx-test migrate migrate-auth migrate-user migrate-joke db db-stop db-reset db-logs
 
 # Run all services
 dev:
@@ -24,6 +24,25 @@ tidy:
 	@cd services/gateway && go mod tidy
 	@go work sync
 	@echo "Done!"
+
+# Test all services
+test:
+	@echo "Testing auth-service..."
+	@cd services/auth && go test ./...
+	@echo "Testing user-service..."
+	@cd services/user && go test ./...
+	@echo "Testing joke-service..."
+	@cd services/joke && go test ./...
+	@echo "All tests passed!"
+
+# Test all services (verbose)
+test-verbose:
+	@echo "Testing auth-service..."
+	@cd services/auth && go test -v ./...
+	@echo "Testing user-service..."
+	@cd services/user && go test -v ./...
+	@echo "Testing joke-service..."
+	@cd services/joke && go test -v ./...
 
 # Run individual services
 auth:
