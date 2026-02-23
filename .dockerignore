@@ -1,0 +1,15 @@
+# Ignore secrets and local artifacts
+.env
+.git
+.gitignore
+
+# Test caches
+**/*_test.go
+
+# Go build outputs
+**/bin/
+**/*.exe
+**/*.out
+
+# Docker meta files
+**/Dockerfile

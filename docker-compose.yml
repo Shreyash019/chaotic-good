@@ -1,4 +1,5 @@
 services:
+  # ─── Database ────────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: funny-pipe-postgres
@@ -17,6 +18,90 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  # ─── Auth Service ────────────────────────────────────────────────────────────
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: funny-pipe-auth
+    restart: unless-stopped
+    environment:
+      AUTH_PORT: "8081"
+      JWT_SECRET: "dev-secret-key-change-in-production"
+      JWT_ACCESS_TTL_MINUTES: "15"
+      JWT_REFRESH_TTL_DAYS: "7"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── User Service ────────────────────────────────────────────────────────────
+  user:
+    build:
+      context: .
+      dockerfile: services/user/Dockerfile
+    container_name: funny-pipe-user
+    restart: unless-stopped
+    environment:
+      USER_PORT: "8082"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── Joke Service ────────────────────────────────────────────────────────────
+  joke:
+    build:
+      context: .
+      dockerfile: services/joke/Dockerfile
+    container_name: funny-pipe-joke
+    restart: unless-stopped
+    environment:
+      JOKE_PORT: "8083"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── Gateway ─────────────────────────────────────────────────────────────────
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    container_name: funny-pipe-gateway
+    restart: unless-stopped
+    environment:
+      GATEWAY_PORT: "8080"
+      JWT_SECRET: "dev-secret-key-change-in-production"
+      RATE_LIMIT_PER_MINUTE: "60"
+      AUTH_SERVICE_URL: "http://auth:8081"
+      USER_SERVICE_URL: "http://user:8082"
+      JOKE_SERVICE_URL: "http://joke:8083"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth
+      - user
+      - joke
+
+  # ─── Nginx reverse proxy ─────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: funny-pipe-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - gateway
 
 volumes:
   postgres_data:
