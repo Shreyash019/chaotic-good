@@ -48,8 +48,14 @@ func main() {
 				"/health",
 				"/api/auth/",
 			},
+			// GET /api/jokes/graphql serves GraphiQL — always public
 			SkippedGET: []string{
-				"/api/jokes/graphql", // GraphiQL explorer — readable without token
+				"/api/jokes/graphql",
+			},
+			// POST /api/jokes/graphql: token optional.
+			// Queries are public; mutations enforce auth inside the GraphQL resolver.
+			OptionalAuth: []string{
+				"/api/jokes/graphql",
 			},
 		}),
 		middleware.Logger,

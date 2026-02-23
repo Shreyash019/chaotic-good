@@ -26,13 +26,14 @@ Authorization: Bearer <access_token>
 
 **Public routes (no token required):**
 
-| Route | Method |
-|---|---|
-| `/health` | `GET` |
-| `/api/auth/*` | Any |
-| `/api/jokes/graphql` | `GET` (GraphiQL UI only) |
+| Route | Method | Auth behaviour |
+|---|---|---|
+| `/health` | `GET` | No auth, pass-through |
+| `/api/auth/*` | Any | No auth, pass-through |
+| `/api/jokes/graphql` | `GET` | No auth (GraphiQL UI) |
+| `/api/jokes/graphql` | `POST` | **Optional auth** — token validated if present, never blocked if absent. GraphQL queries are public; mutations require a valid Bearer token (enforced inside the resolver). |
 
-**Skipped routes** are configured in the gateway middleware. All other routes require a valid token.
+All other routes require a valid Bearer token. Routes are configured in the gateway middleware.
 
 ### Token Lifecycle
 
@@ -374,6 +375,12 @@ http://localhost/api/jokes/graphql
 
 Execute a GraphQL query or mutation.
 
+**Authentication** — optional / resolver-level:
+- **Queries** (`jokes`, `joke`, `randomJoke`) — no token required.
+- **Mutations** (`createJoke`, `deleteJoke`) — a valid `Authorization: Bearer <token>` header must be included. If absent or invalid, the resolver returns `{"errors":[{"message":"unauthorized"}]}`.
+
+The gateway never blocks a request to this endpoint regardless of the Authorization header.
+
 **Request body** (JSON)
 
 ```json
@@ -381,9 +388,6 @@ Execute a GraphQL query or mutation.
   "query": "{ jokes { id content category } }",
   "variables": {}
 }
-```
-
-**Mutations require** `Authorization: Bearer <token>`.
 
 ---
 

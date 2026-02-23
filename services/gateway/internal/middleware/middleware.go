@@ -52,8 +52,9 @@ func Chain(handler http.Handler, middlewares ...func(http.Handler) http.Handler)
 // JWTConfig holds JWT configuration
 type JWTConfig struct {
 	Secret        []byte
-	SkippedRoutes []string // prefix-matched paths that skip auth (all methods)
+	SkippedRoutes []string // prefix-matched paths that skip auth entirely (all methods)
 	SkippedGET    []string // prefix-matched paths that skip auth for GET only
+	OptionalAuth  []string // prefix-matched paths: validate token if present, but never block
 }
 
 // Auth middleware validates JWT token
@@ -75,6 +76,33 @@ func Auth(config JWTConfig) func(http.Handler) http.Handler {
 						next.ServeHTTP(w, r)
 						return
 					}
+				}
+			}
+
+			// Optional-auth routes: validate token if present, never block if absent.
+			// Used for GraphQL endpoints where queries are public but mutations need auth.
+			for _, route := range config.OptionalAuth {
+				if strings.HasPrefix(r.URL.Path, route) {
+					authHeader := r.Header.Get("Authorization")
+					if authHeader != "" {
+						tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+						token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+							if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+								return nil, http.ErrNoCookie
+							}
+							return config.Secret, nil
+						})
+						if err == nil && token.Valid {
+							if claims, ok := token.Claims.(jwt.MapClaims); ok {
+								r.Header.Set("X-User-ID", claims["user_id"].(string))
+								r.Header.Set("X-User-Email", claims["email"].(string))
+							}
+						}
+						// Invalid token on an optional-auth route → still allow through;
+						// the resolver will return "unauthorized" for protected operations.
+					}
+					next.ServeHTTP(w, r)
+					return
 				}
 			}
 
