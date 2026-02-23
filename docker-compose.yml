@@ -2,7 +2,7 @@ services:
   # ─── Database ────────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
-    container_name: funny-pipe-postgres
+    container_name: chaotic-good-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: services/auth/Dockerfile
-    container_name: funny-pipe-auth
+    container_name: chaotic-good-auth
     restart: unless-stopped
     environment:
       AUTH_PORT: "8081"
@@ -43,7 +43,7 @@ services:
     build:
       context: .
       dockerfile: services/user/Dockerfile
-    container_name: funny-pipe-user
+    container_name: chaotic-good-user
     restart: unless-stopped
     environment:
       USER_PORT: "8082"
@@ -59,7 +59,7 @@ services:
     build:
       context: .
       dockerfile: services/joke/Dockerfile
-    container_name: funny-pipe-joke
+    container_name: chaotic-good-joke
     restart: unless-stopped
     environment:
       JOKE_PORT: "8083"
@@ -75,7 +75,7 @@ services:
     build:
       context: .
       dockerfile: services/gateway/Dockerfile
-    container_name: funny-pipe-gateway
+    container_name: chaotic-good-gateway
     restart: unless-stopped
     environment:
       GATEWAY_PORT: "8080"
@@ -94,7 +94,7 @@ services:
   # ─── Nginx reverse proxy ─────────────────────────────────────────────────────
   nginx:
     image: nginx:1.27-alpine
-    container_name: funny-pipe-nginx
+    container_name: chaotic-good-nginx
     restart: unless-stopped
     ports:
       - "80:80"

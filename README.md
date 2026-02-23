@@ -95,83 +95,164 @@ funny-pipe/
 
 ---
 
-## Prerequisites
+## Getting Started
 
-- [Go 1.22+](https://go.dev/dl/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker Compose)
-- [Nginx](https://nginx.org/) — local dev only: `brew install nginx`
+```bash
+git clone https://github.com/Shreyash019/chaotic-good.git
+cd chaotic-good
+cp .env.example .env   # set a strong JWT_SECRET before production use
+```
 
 ---
 
-## Getting Started
-
 ### Option A — Docker Compose (recommended)
 
-Runs the full stack (Postgres + all 4 services + Nginx) in containers.
+No Go or Nginx required locally. Spins up all 6 containers:
+**Postgres → Auth → User → Joke → Gateway → Nginx**
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/Shreyash019/chaotic-good.git
-cd chaotic-good
+# Build images + start all containers in background
+make docker-up
 
-# 2. Copy env file
-cp .env.example .env
-
-# 3. Build images and start all containers
-docker compose up --build
+# OR follow all logs in foreground (Ctrl+C stops everything)
+make docker-up-logs
 ```
 
-The API is available at `http://localhost` once all containers are healthy.
+| URL | Description |
+|---|---|
+| `http://localhost` | Main entry point (Nginx :80) |
+| `http://localhost:8080` | Gateway (direct) |
+| `http://localhost:8081` | Auth service (direct) |
+| `http://localhost:8082` | User service (direct) |
+| `http://localhost:8083` | Joke service / GraphiQL (direct) |
+
+```bash
+make docker-ps          # show status of all containers
+make docker-logs        # tail logs from all containers
+make docker-restart     # restart all containers
+make docker-down        # stop containers (database volume kept)
+make docker-clean       # stop containers + delete volumes (wipes DB)
+```
+
+---
 
 ### Option B — Local development
 
-Requires a running PostgreSQL instance (or `make db` to start one via Docker).
+**Prerequisites:** [Go 1.22+](https://go.dev/dl/) · [Docker Desktop](https://www.docker.com/products/docker-desktop/) · Nginx (`brew install nginx`) · psql (`brew install libpq`)
+
+#### Step 1 — Start Postgres
 
 ```bash
-# 1. Clone and enter the repo
-git clone https://github.com/Shreyash019/chaotic-good.git
-cd chaotic-good
-
-# 2. Copy env file and set DATABASE_URL
-cp .env.example .env
-
-# 2. Start PostgreSQL container
 make db
+# waits until postgres is healthy on localhost:5432
+```
 
-# 3. Run migrations
+#### Step 2 — Run migrations
+
+```bash
+# DATABASE_URL is already set in .env — export it first
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/chaotic_good?sslmode=disable
 make migrate
+```
 
-# 4. Start all services + Nginx
+#### Step 3 — Start everything
+
+```bash
 make dev
+# starts auth (:8081), user (:8082), joke (:8083), gateway (:8080), nginx (:80)
+# Ctrl+C shuts all processes down cleanly
+```
+
+#### Run a single service
+
+```bash
+make auth       # auth-service  on :8081
+make user       # user-service  on :8082
+make joke       # joke-service  on :8083
+make gateway    # gateway       on :8080
+```
+
+#### Nginx
+
+```bash
+make nginx          # start Nginx (uses nginx/nginx.conf)
+make nginx-reload   # reload config without downtime
+make nginx-stop     # stop Nginx
+make nginx-test     # validate config syntax
+```
+
+#### Database helpers
+
+```bash
+make db             # start Postgres container
+make db-stop        # stop  Postgres container
+make db-reset       # destroy container + volume
+make db-logs        # tail  Postgres logs
+```
+
+---
+
+### Build & Test
+
+```bash
+make build           # compile all 4 services
+make tidy            # go mod tidy + go work sync
+make test            # run all unit tests
+make test-verbose    # run all unit tests with -v
 ```
 
 ---
 
 ## Makefile Commands
 
+**Docker (full stack)**
+
 | Command | Description |
 |---|---|
-| `make dev` | Start all services locally + Nginx |
-| `make build` | Build all 4 services |
-| `make tidy` | Tidy all Go modules + sync workspace |
-| `make test` | Run all unit tests |
-| `make test-verbose` | Run all unit tests with verbose output |
-| `make auth` | Run auth-service only |
-| `make user` | Run user-service only |
-| `make joke` | Run joke-service only |
-| `make gateway` | Run gateway only |
+| `make docker-up` | Build images + start all 6 containers (background) |
+| `make docker-up-logs` | Build images + start all containers (foreground, streams logs) |
+| `make docker-down` | Stop containers (volume kept) |
+| `make docker-clean` | Stop containers + delete volumes (wipes DB) |
+| `make docker-build` | Build / rebuild images without starting |
+| `make docker-logs` | Stream logs from all containers |
+| `make docker-ps` | Show container status |
+| `make docker-restart` | Restart all containers |
+
+**Local development**
+
+| Command | Description |
+|---|---|
+| `make dev` | Start all services + Nginx (foreground, Ctrl+C to stop) |
+| `make auth` | Run auth-service on :8081 |
+| `make user` | Run user-service on :8082 |
+| `make joke` | Run joke-service on :8083 |
+| `make gateway` | Run gateway on :8080 |
 | `make nginx` | Start local Nginx |
 | `make nginx-stop` | Stop local Nginx |
 | `make nginx-reload` | Reload local Nginx config |
-| `make nginx-test` | Test local Nginx config validity |
-| `make db` | Start PostgreSQL container (Docker) |
-| `make db-stop` | Stop PostgreSQL container |
-| `make db-reset` | Destroy PostgreSQL container + volume |
-| `make db-logs` | Tail PostgreSQL container logs |
-| `make migrate` | Run all DB migrations |
-| `make migrate-auth` | Run auth-service migrations only |
-| `make migrate-user` | Run user-service migrations only |
-| `make migrate-joke` | Run joke-service migrations only |
+| `make nginx-test` | Validate Nginx config syntax |
+
+**Database (local Postgres via Docker)**
+
+| Command | Description |
+|---|---|
+| `make db` | Start Postgres container + wait until healthy |
+| `make db-stop` | Stop Postgres container |
+| `make db-reset` | Destroy Postgres container + volume |
+| `make db-logs` | Tail Postgres logs |
+| `make migrate` | Run all service migrations |
+| `make migrate-auth` | Run auth migrations only |
+| `make migrate-user` | Run user migrations only |
+| `make migrate-joke` | Run joke migrations only |
+
+**Build & test**
+
+| Command | Description |
+|---|---|
+| `make build` | Compile all 4 services |
+| `make tidy` | `go mod tidy` + `go work sync` across all modules |
+| `make test` | Run all unit tests |
+| `make test-verbose` | Run all unit tests with `-v` |
 
 ---
 

@@ -1,4 +1,4 @@
-.PHONY: dev build tidy test test-verbose auth gateway user joke nginx nginx-stop nginx-reload nginx-test migrate migrate-auth migrate-user migrate-joke db db-stop db-reset db-logs
+.PHONY: dev build tidy test test-verbose auth gateway user joke nginx nginx-stop nginx-reload nginx-test migrate migrate-auth migrate-user migrate-joke db db-stop db-reset db-logs docker-up docker-down docker-build docker-logs docker-ps docker-restart docker-clean
 
 # Run all services
 dev:
@@ -114,3 +114,48 @@ db-reset:
 
 db-logs:
 	@docker compose logs -f postgres
+
+# ─── Docker (Full Stack) ──────────────────────────────────────────────────────
+# Builds all images and starts every container (postgres, auth, user, joke, gateway, nginx)
+docker-up:
+	@echo "Building images and starting all containers..."
+	@docker compose up -d --build
+	@echo ""
+	@echo "Stack is up. API available at http://localhost"
+	@echo "  Gateway  : http://localhost:8080"
+	@echo "  Auth     : http://localhost:8081"
+	@echo "  User     : http://localhost:8082"
+	@echo "  Joke     : http://localhost:8083"
+	@echo ""
+	@docker compose ps
+
+# Start full stack in foreground (streams all logs)
+docker-up-logs:
+	@docker compose up --build
+
+# Stop and remove containers (keeps volumes/data)
+docker-down:
+	@echo "Stopping all containers..."
+	@docker compose down
+
+# Stop and remove containers + volumes (wipes database)
+docker-clean:
+	@echo "Removing all containers and volumes (all data will be lost)..."
+	@docker compose down -v --remove-orphans
+	@echo "Done."
+
+# Build (or rebuild) all images without starting
+docker-build:
+	@docker compose build
+
+# Stream logs from all containers (Ctrl+C to stop)
+docker-logs:
+	@docker compose logs -f
+
+# Show running container status
+docker-ps:
+	@docker compose ps
+
+# Restart all containers
+docker-restart:
+	@docker compose restart
