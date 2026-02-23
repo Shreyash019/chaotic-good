@@ -1,7 +1,7 @@
 .PHONY: dev build tidy test test-verbose auth gateway user joke nginx nginx-stop nginx-reload nginx-test migrate migrate-auth migrate-user migrate-joke db db-stop db-reset db-logs docker-up docker-down docker-build docker-logs docker-ps docker-restart docker-clean
 
-# Run all services
-dev:
+# Run all services (starts Docker Postgres first, then all Go services + Nginx)
+dev: db
 	@chmod +x scripts/dev.sh && ./scripts/dev.sh
 
 # Build all services
@@ -74,25 +74,25 @@ nginx-test:
 	@nginx -c $(PWD)/nginx/nginx.conf -t
 
 # ─── Database ──────────────────────────────────────────────────────────────────
-# Requires DATABASE_URL to be set, e.g.:
-#   export DATABASE_URL=postgres://postgres:postgres@localhost:5432/chaotic_good?sslmode=disable
+# Migrations run via the Docker Postgres container — no local psql required.
+# Start the container first with: make db
 
 migrate-auth:
 	@echo "Running auth migrations..."
-	@psql "$(DATABASE_URL)" -f services/auth/migrations/001_create_users.sql
+	@docker compose exec -T postgres psql -U postgres -d chaotic_good -f - < services/auth/migrations/001_create_users.sql
 	@echo "Auth migrations done."
 
 migrate-user:
 	@echo "Running user migrations..."
-	@psql "$(DATABASE_URL)" -f services/user/migrations/001_create_profiles.sql
+	@docker compose exec -T postgres psql -U postgres -d chaotic_good -f - < services/user/migrations/001_create_profiles.sql
 	@echo "User migrations done."
 
 migrate-joke:
 	@echo "Running joke migrations..."
-	@psql "$(DATABASE_URL)" -f services/joke/migrations/001_create_jokes.sql
+	@docker compose exec -T postgres psql -U postgres -d chaotic_good -f - < services/joke/migrations/001_create_jokes.sql
 	@echo "Joke migrations done."
 
-migrate: migrate-auth migrate-user migrate-joke
+migrate: db migrate-auth migrate-user migrate-joke
 	@echo "All migrations complete."
 
 # ─── Docker (PostgreSQL) ───────────────────────────────────────────────────────
@@ -100,7 +100,10 @@ db:
 	@echo "Starting PostgreSQL container..."
 	@docker compose up -d postgres
 	@echo "Waiting for Postgres to be ready..."
-	@docker compose exec postgres sh -c 'until pg_isready -U postgres -d chaotic_good; do sleep 1; done'
+	@docker compose exec -T postgres sh -c 'until pg_isready -U postgres; do sleep 1; done'
+	@echo "Ensuring chaotic_good database exists..."
+	@docker compose exec -T postgres psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname='chaotic_good'" | grep -q 1 \
+		|| docker compose exec -T postgres psql -U postgres -c "CREATE DATABASE chaotic_good;"
 	@echo "PostgreSQL is ready on localhost:5432"
 
 db-stop:
