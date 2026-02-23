@@ -1,7 +1,9 @@
 go 1.25.5
 
 use (
+	./packages/config
 	./services/auth
 	./services/gateway
-	./packages/config
+	./services/joke
+	./services/user
 )

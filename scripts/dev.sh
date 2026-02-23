@@ -28,6 +28,18 @@ go run cmd/auth/main.go &
 PIDS+=($!)
 echo -e "${GREEN}[auth-service]${NC}   started on :8081 (PID $!)"
 
+# Start User Service
+cd "$ROOT/services/user"
+go run cmd/user/main.go &
+PIDS+=($!)
+echo -e "${GREEN}[user-service]${NC}   started on :8082 (PID $!)"
+
+# Start Joke Service
+cd "$ROOT/services/joke"
+go run cmd/joke/main.go &
+PIDS+=($!)
+echo -e "${GREEN}[joke-service]${NC}   started on :8083 (PID $!)"
+
 # Start Gateway
 cd "$ROOT/services/gateway"
 go run cmd/gateway/main.go &

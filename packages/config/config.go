@@ -69,10 +69,10 @@ func GetInt(key string, fallback int) int {
 // ─── Typed config structs ────────────────────────────────────
 
 type AuthConfig struct {
-	Port              string
-	JWTSecret         string
-	AccessTTLMinutes  int
-	RefreshTTLDays    int
+	Port             string
+	JWTSecret        string
+	AccessTTLMinutes int
+	RefreshTTLDays   int
 }
 
 type GatewayConfig struct {
@@ -90,6 +90,38 @@ func LoadAuthConfig() AuthConfig {
 		JWTSecret:        GetString("JWT_SECRET", "dev-secret-key"),
 		AccessTTLMinutes: GetInt("JWT_ACCESS_TTL_MINUTES", 15),
 		RefreshTTLDays:   GetInt("JWT_REFRESH_TTL_DAYS", 7),
+	}
+}
+
+type UserConfig struct {
+	Port string
+}
+
+func LoadUserConfig() UserConfig {
+	return UserConfig{
+		Port: GetString("USER_PORT", "8082"),
+	}
+}
+
+// DBConfig holds the PostgreSQL connection string.
+// If DatabaseURL is empty the services fall back to their in-memory stores.
+type DBConfig struct {
+	DatabaseURL string
+}
+
+func LoadDBConfig() DBConfig {
+	return DBConfig{
+		DatabaseURL: GetString("DATABASE_URL", ""),
+	}
+}
+
+type JokeConfig struct {
+	Port string
+}
+
+func LoadJokeConfig() JokeConfig {
+	return JokeConfig{
+		Port: GetString("JOKE_PORT", "8083"),
 	}
 }
 

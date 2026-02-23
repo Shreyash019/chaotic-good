@@ -52,18 +52,29 @@ func Chain(handler http.Handler, middlewares ...func(http.Handler) http.Handler)
 // JWTConfig holds JWT configuration
 type JWTConfig struct {
 	Secret        []byte
-	SkippedRoutes []string // routes that don't need auth
+	SkippedRoutes []string // prefix-matched paths that skip auth (all methods)
+	SkippedGET    []string // prefix-matched paths that skip auth for GET only
 }
 
 // Auth middleware validates JWT token
 func Auth(config JWTConfig) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Check if route should skip auth
+			// Check if route should skip auth (all methods)
 			for _, route := range config.SkippedRoutes {
 				if strings.HasPrefix(r.URL.Path, route) {
 					next.ServeHTTP(w, r)
 					return
+				}
+			}
+
+			// Check if GET-only routes should skip auth
+			if r.Method == http.MethodGet {
+				for _, route := range config.SkippedGET {
+					if strings.HasPrefix(r.URL.Path, route) {
+						next.ServeHTTP(w, r)
+						return
+					}
 				}
 			}
 

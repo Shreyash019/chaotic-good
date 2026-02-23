@@ -1,9 +1,12 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
+	"strings"
 	"sync"
 
+	_ "github.com/lib/pq"
 	"github.com/shreyashkumar/funny-pipe/services/auth/internal/model"
 )
 
@@ -62,4 +65,56 @@ func (r *InMemoryAuthRepository) GetUserByID(id string) (*model.User, error) {
 	}
 
 	return nil, errors.New("user not found")
+}
+
+// ─── PostgreSQL implementation ────────────────────────────────────────────────
+
+type PostgresAuthRepository struct {
+	db *sql.DB
+}
+
+func NewPostgresAuthRepository(db *sql.DB) IAuthRepository {
+	return &PostgresAuthRepository{db: db}
+}
+
+func (r *PostgresAuthRepository) CreateUser(user *model.User) error {
+	_, err := r.db.Exec(
+		`INSERT INTO users (id, email, password_hash, created_at) VALUES ($1, $2, $3, $4)`,
+		user.ID, user.Email, user.Password, user.CreatedAt,
+	)
+	if err != nil {
+		if strings.Contains(err.Error(), "unique") || strings.Contains(err.Error(), "duplicate") {
+			return errors.New("user already exists")
+		}
+		return err
+	}
+	return nil
+}
+
+func (r *PostgresAuthRepository) GetUserByEmail(email string) (*model.User, error) {
+	row := r.db.QueryRow(
+		`SELECT id, email, password_hash, created_at FROM users WHERE email = $1`, email,
+	)
+	u := &model.User{}
+	if err := row.Scan(&u.ID, &u.Email, &u.Password, &u.CreatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+	return u, nil
+}
+
+func (r *PostgresAuthRepository) GetUserByID(id string) (*model.User, error) {
+	row := r.db.QueryRow(
+		`SELECT id, email, password_hash, created_at FROM users WHERE id = $1`, id,
+	)
+	u := &model.User{}
+	if err := row.Scan(&u.ID, &u.Email, &u.Password, &u.CreatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+	return u, nil
 }

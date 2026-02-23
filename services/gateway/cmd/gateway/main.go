@@ -48,6 +48,9 @@ func main() {
 				"/health",
 				"/api/auth/",
 			},
+			SkippedGET: []string{
+				"/api/jokes/graphql", // GraphiQL explorer — readable without token
+			},
 		}),
 		middleware.Logger,
 	)
