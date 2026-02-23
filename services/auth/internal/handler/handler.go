@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/model"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/service"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/service"
 )
 
 type AuthHandler struct {

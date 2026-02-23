@@ -7,7 +7,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/shreyashkumar/funny-pipe/services/user/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/user/internal/model"
 )
 
 type IUserRepository interface {

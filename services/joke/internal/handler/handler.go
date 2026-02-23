@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/graphql-go/graphql"
-	jschema "github.com/shreyashkumar/funny-pipe/services/joke/internal/schema"
+	jschema "github.com/Shreyash019/chaotic-good/services/joke/internal/schema"
 )
 
 // GraphQLHandler handles POST (query execution) and GET (GraphiQL explorer) at /graphql.

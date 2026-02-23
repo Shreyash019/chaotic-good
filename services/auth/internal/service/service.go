@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/model"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/repository"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 

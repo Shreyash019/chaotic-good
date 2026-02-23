@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/shreyashkumar/funny-pipe/packages/config"
-	"github.com/shreyashkumar/funny-pipe/services/gateway/internal/middleware"
-	"github.com/shreyashkumar/funny-pipe/services/gateway/internal/proxy"
-	"github.com/shreyashkumar/funny-pipe/services/gateway/internal/router"
+	"github.com/Shreyash019/chaotic-good/packages/config"
+	"github.com/Shreyash019/chaotic-good/services/gateway/internal/middleware"
+	"github.com/Shreyash019/chaotic-good/services/gateway/internal/proxy"
+	"github.com/Shreyash019/chaotic-good/services/gateway/internal/router"
 )
 
 func main() {

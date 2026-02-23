@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/graphql-go/graphql"
-	"github.com/shreyashkumar/funny-pipe/services/joke/internal/model"
-	"github.com/shreyashkumar/funny-pipe/services/joke/internal/repository"
+	"github.com/Shreyash019/chaotic-good/services/joke/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/joke/internal/repository"
 )
 
 // ContextKey is the type used for context values set by the HTTP handler.

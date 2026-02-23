@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/shreyashkumar/funny-pipe/services/user/internal/model"
-	"github.com/shreyashkumar/funny-pipe/services/user/internal/service"
+	"github.com/Shreyash019/chaotic-good/services/user/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/user/internal/service"
 )
 
 type UserHandler struct {

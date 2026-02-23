@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/shreyashkumar/funny-pipe/packages/config"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/handler"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/repository"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/service"
+	"github.com/Shreyash019/chaotic-good/packages/config"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/handler"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/repository"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/service"
 )
 
 func main() {

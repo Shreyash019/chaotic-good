@@ -20,7 +20,7 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-echo -e "${GREEN}Starting Funny-API services...${NC}\n"
+echo -e "${GREEN}Starting Chaotic-Good services...${NC}\n"
 
 # Start Auth Service
 cd "$ROOT/services/auth"

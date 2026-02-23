@@ -75,7 +75,7 @@ nginx-test:
 
 # ─── Database ──────────────────────────────────────────────────────────────────
 # Requires DATABASE_URL to be set, e.g.:
-#   export DATABASE_URL=postgres://postgres:postgres@localhost:5432/funny_pipe?sslmode=disable
+#   export DATABASE_URL=postgres://postgres:postgres@localhost:5432/chaotic_good?sslmode=disable
 
 migrate-auth:
 	@echo "Running auth migrations..."
@@ -100,7 +100,7 @@ db:
 	@echo "Starting PostgreSQL container..."
 	@docker compose up -d postgres
 	@echo "Waiting for Postgres to be ready..."
-	@docker compose exec postgres sh -c 'until pg_isready -U postgres -d funny_pipe; do sleep 1; done'
+	@docker compose exec postgres sh -c 'until pg_isready -U postgres -d chaotic_good; do sleep 1; done'
 	@echo "PostgreSQL is ready on localhost:5432"
 
 db-stop:

@@ -1,4 +1,4 @@
-# Funny-API — API Reference
+# Chaotic-Good — API Reference
 
 All routes are accessed through **Nginx** (`:80`) → **Gateway** (`:8080`).  
 The gateway strips the service prefix before forwarding (e.g. `/api/auth/register` → `/register` on auth-service).

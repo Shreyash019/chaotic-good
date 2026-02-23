@@ -3,7 +3,7 @@ package repository
 import (
 	"testing"
 
-	"github.com/shreyashkumar/funny-pipe/services/joke/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/joke/internal/model"
 )
 
 func newRepo() IJokeRepository { return NewInMemoryJokeRepository() }

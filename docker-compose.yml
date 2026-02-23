@@ -7,14 +7,14 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: funny_pipe
+      POSTGRES_DB: chaotic_good
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d funny_pipe"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chaotic_good"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -31,7 +31,7 @@ services:
       JWT_SECRET: "dev-secret-key-change-in-production"
       JWT_ACCESS_TTL_MINUTES: "15"
       JWT_REFRESH_TTL_DAYS: "7"
-      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/chaotic_good?sslmode=disable"
     ports:
       - "8081:8081"
     depends_on:
@@ -47,7 +47,7 @@ services:
     restart: unless-stopped
     environment:
       USER_PORT: "8082"
-      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/chaotic_good?sslmode=disable"
     ports:
       - "8082:8082"
     depends_on:
@@ -63,7 +63,7 @@ services:
     restart: unless-stopped
     environment:
       JOKE_PORT: "8083"
-      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/funny_pipe?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/chaotic_good?sslmode=disable"
     ports:
       - "8083:8083"
     depends_on:

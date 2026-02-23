@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	_ "github.com/lib/pq"
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/model"
 )
 
 // IAuthRepository defines the interface for auth repository

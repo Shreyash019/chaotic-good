@@ -1,9 +1,13 @@
-# Funny-API
+# Chaotic-Good
 
-A Go monorepo of microservices — REST + GraphQL — connected through an API Gateway, JWT authentication, PostgreSQL, and Nginx.  
-Fully containerised with Docker Compose.
+An open-source Go microservices playground — REST + GraphQL — built for frontend developers who want a real backend to test against, and backend developers who want a clean reference implementation.  
+Some services are deliberately chaotic (random crashes, flaky responses). Others are stable reference implementations.
 
 > **API Reference** → see [API_DOC.md](API_DOC.md)
+
+[![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go)](https://go.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Repo](https://img.shields.io/badge/GitHub-Shreyash019%2Fchaotic--good-181717?logo=github)](https://github.com/Shreyash019/chaotic-good)
 
 ---
 
@@ -78,7 +82,7 @@ funny-pipe/
 │   └── nginx/nginx.conf             ← Nginx config for Docker
 ├── nginx/
 │   ├── nginx.conf                   ← Nginx config for local dev
-│   └── conf.d/funny-api.conf
+│   └── conf.d/chaotic-good.conf
 ├── scripts/
 │   └── dev.sh                       ← Start all services locally
 ├── docker-compose.yml               ← Full stack: 6 containers
@@ -106,10 +110,14 @@ funny-pipe/
 Runs the full stack (Postgres + all 4 services + Nginx) in containers.
 
 ```bash
-# 1. Copy env file
+# 1. Clone the repo
+git clone https://github.com/Shreyash019/chaotic-good.git
+cd chaotic-good
+
+# 2. Copy env file
 cp .env.example .env
 
-# 2. Build images and start all containers
+# 3. Build images and start all containers
 docker compose up --build
 ```
 
@@ -120,7 +128,11 @@ The API is available at `http://localhost` once all containers are healthy.
 Requires a running PostgreSQL instance (or `make db` to start one via Docker).
 
 ```bash
-# 1. Copy env file and set DATABASE_URL
+# 1. Clone and enter the repo
+git clone https://github.com/Shreyash019/chaotic-good.git
+cd chaotic-good
+
+# 2. Copy env file and set DATABASE_URL
 cp .env.example .env
 
 # 2. Start PostgreSQL container

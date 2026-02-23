@@ -1,4 +1,4 @@
-module github.com/shreyashkumar/funny-pipe/services/joke
+module github.com/Shreyash019/chaotic-good/services/joke
 
 go 1.22.0
 

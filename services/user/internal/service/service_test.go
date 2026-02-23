@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/shreyashkumar/funny-pipe/services/user/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/user/internal/model"
 )
 
 type mockUserRepo struct{ profiles map[string]*model.UserProfile }

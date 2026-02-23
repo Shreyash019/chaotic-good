@@ -8,7 +8,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/shreyashkumar/funny-pipe/services/joke/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/joke/internal/model"
 )
 
 // ─── Interface ────────────────────────────────────────────────────────────────

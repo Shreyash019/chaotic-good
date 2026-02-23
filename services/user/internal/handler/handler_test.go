@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/shreyashkumar/funny-pipe/services/user/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/user/internal/model"
 )
 
 type mockUserSvc struct {

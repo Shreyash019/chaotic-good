@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/shreyashkumar/funny-pipe/services/auth/internal/model"
+	"github.com/Shreyash019/chaotic-good/services/auth/internal/model"
 )
 
 type mockAuthRepo struct{ users map[string]*model.User }

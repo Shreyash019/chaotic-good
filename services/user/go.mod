@@ -1,4 +1,4 @@
-module github.com/shreyashkumar/funny-pipe/services/user
+module github.com/Shreyash019/chaotic-good/services/user
 
 go 1.22.0
 

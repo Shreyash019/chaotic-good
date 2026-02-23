@@ -1,4 +1,4 @@
-module github.com/shreyashkumar/funny-pipe/services/gateway
+module github.com/Shreyash019/chaotic-good/services/gateway
 
 go 1.25.5
 
